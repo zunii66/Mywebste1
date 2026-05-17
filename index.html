@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Web Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item strong {
+            color: #333;
+        }
+
+        .error {
+            background: #ffebee !important;
+            border-left-color: #f44336 !important;
+            color: #c62828;
+        }
+
+        .success {
+            background: #e8f5e9 !important;
+            border-left-color: #4caf50 !important;
+            color: #2e7d32;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Test Web App</h1>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" placeholder="Enter your age" min="1" max="120" required>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" required>
+                    <option value="">-- Select Country --</option>
+                    <option value="USA">USA</option>
+                    <option value="UK">UK</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                    <option value="India">India</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" placeholder="Enter your message here..."></textarea>
+            </div>
+
+            <button type="submit">Submit Form</button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>✓ Form Submitted Successfully!</h3>
+            <div id="resultContent"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="number" id="submitCount">0</div>
+                <div class="label">Total Submissions</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="avgAge">0</div>
+                <div class="label">Average Age</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Test Web Application | Created for GitHub Testing</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple Java-like backend simulation using JavaScript
+        class FormProcessor {
+            constructor() {
+                this.submissions = [];
+                this.loadData();
+            }
+
+            // Validate email format
+            validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Validate age
+            validateAge(age) {
+                return age > 0 && age < 120;
+            }
+
+            // Process form submission
+            processForm(data) {
+                // Validation
+                if (!data.fullName || data.fullName.trim() === '') {
+                    throw new Error('Full name is required');
+                }
+                if (!this.validateEmail(data.email)) {
+                    throw new Error('Invalid email format');
+                }
+                if (!this.validateAge(data.age)) {
+                    throw new Error('Age must be between 1 and 119');
+                }
+                if (!data.country || data.country === '') {
+                    throw new Error('Please select a country');
+                }
+
+                // Create submission object
+                const submission = {
+                    id: this.submissions.length + 1,
+                    fullName: data.fullName.trim(),
+                    email: data.email.trim(),
+                    age: parseInt(data.age),
+                    country: data.country,
+                    message: data.message.trim(),
+                    timestamp: new Date().toLocaleString()
+                };
+
+                // Store submission
+                this.submissions.push(submission);
+                this.saveData();
+
+                return submission;
+            }
+
+            // Calculate average age
+            getAverageAge() {
+                if (this.submissions.length === 0) return 0;
+                const sum = this.submissions.reduce((acc, sub) => acc + sub.age, 0);
+                return Math.round(sum / this.submissions.length);
+            }
+
+            // Get total submissions
+            getTotalSubmissions() {
+                return this.submissions.length;
+            }
+
+            // Save to localStorage
+            saveData() {
+                localStorage.setItem('formSubmissions', JSON.stringify(this.submissions));
+            }
+
+            // Load from localStorage
+            loadData() {
+                const data = localStorage.getItem('formSubmissions');
+                if (data) {
+                    this.submissions = JSON.parse(data);
+                }
+            }
+
+            // Clear all data
+            clearData() {
+                this.submissions = [];
+                this.saveData();
+            }
+        }
+
+        // Initialize processor
+        const processor = new FormProcessor();
+
+        // Get form element
+        const form = document.getElementById('testForm');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+        const submitCountEl = document.getElementById('submitCount');
+        const avgAgeEl = document.getElementById('avgAge');
+
+        // Update stats
+        function updateStats() {
+            submitCountEl.textContent = processor.getTotalSubmissions();
+            avgAgeEl.textContent = processor.getAverageAge();
+        }
+
+        // Form submission handler
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            try {
+                // Get form data
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    age: document.getElementById('age').value,
+                    country: document.getElementById('country').value,
+                    message: document.getElementById('message').value
+                };
+
+                // Process form
+                const submission = processor.processForm(formData);
+
+                // Display result
+                resultContent.innerHTML = `
+                    <div class="result-item">
+                        <strong>Name:</strong> ${submission.fullName}
+                    </div>
+                    <div class="result-item">
+                        <strong>Email:</strong> ${submission.email}
+                    </div>
+                    <div class="result-item">
+                        <strong>Age:</strong> ${submission.age}
+                    </div>
+                    <div class="result-item">
+                        <strong>Country:</strong> ${submission.country}
+                    </div>
+                    <div class="result-item">
+                        <strong>Message:</strong> ${submission.message || 'N/A'}
+                    </div>
+                    <div class="result-item">
+                        <strong>Submitted:</strong> ${submission.timestamp}
+                    </div>
+                `;
+
+                resultDiv.className = 'result show success';
+                resultDiv.innerHTML = `<h3>✓ Form Submitted Successfully!</h3>` + resultDiv.innerHTML;
+
+                // Reset form
+                form.reset();
+
+                // Update stats
+                updateStats();
+
+                // Hide result after 5 seconds
+                setTimeout(() => {
+                    resultDiv.classList.remove('show');
+                }, 5000);
+
+            } catch (error) {
+                resultDiv.className = 'result show error';
+                resultDiv.innerHTML = `<h3>✗ Error: ${error.message}</h3>`;
+
+                // Hide error after 4 seconds
+                setTimeout(() => {
+                    resultDiv.classList.remove('show');
+                }, 4000);
+            }
+        });
+
+        // Initial stats update
+        updateStats();
+    </script>
+</body>
+</html>
